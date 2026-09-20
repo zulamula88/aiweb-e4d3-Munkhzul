@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baseline — Tennis Club &amp; Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": { "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/+esm" } }
+</script>
+<style>
+:root{
+  --background:#ffffff; --foreground:#0a0a0a;
+  --brand:#2563c9; --brand-deep:#0f2f63; --brand-light:#5790e6; --accent-teal:#0b6e97;
+  --surface:#f4f4f4; --surface-card:#ffffff;
+  --ink:#0a0a0a; --ink-soft:#717784; --ghost:#d7dae1; --hairline:#e6e8ec; --on-brand:#ffffff;
+  --radius-card:1.5rem; --radius-card-lg:2rem; --radius-pill:62.5rem;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+@media (max-width:1920px){ html{ font-size:0.833333vw; } }
+@media (max-width:1440px){ html{ font-size:1.111111vw; } }
+@media (max-width:1024px){ html{ font-size:1.5625vw; } }
+@media (max-width:640px){ html{ font-size:4.444444vw; } }
+img,picture{display:block;max-width:100%;}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none;}
+a{color:inherit;text-decoration:none;}
+ul,ol{list-style:none;}
+input,textarea{font:inherit;}
+body{min-height:100vh;background:#fff;color:var(--foreground);font-family:"Onest",system-ui,sans-serif;font-weight:400;}
+:focus-visible{outline:2px solid var(--brand-light);outline-offset:2px;}
+[hidden]{display:none !important;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+main{width:100%;overflow-x:clip;padding:0.5rem;}
+@media (min-width:640px){ main{ padding:0.75rem; } }
+
+/* ---------- loader ---------- */
+.loader{position:fixed;inset:0;z-index:200;background:var(--brand-deep);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;transition:transform 850ms cubic-bezier(0.65,0,0.35,1);}
+.loader.exit{transform:translateY(-105%);}
+.loader__mark{display:flex;align-items:center;gap:0.5rem;opacity:0;transform:translateY(16px);transition:opacity .5s cubic-bezier(0.16,1,0.3,1),transform .5s cubic-bezier(0.16,1,0.3,1);}
+.loader__mark.in{opacity:1;transform:translateY(0);}
+.loader__mark svg{width:1.75rem;height:1.75rem;}
+.loader__wordmark{font-size:1.5rem;font-weight:500;text-transform:uppercase;letter-spacing:0.2em;}
+.loader__track{width:10rem;height:1px;border-radius:var(--radius-pill);background:rgba(255,255,255,.2);overflow:hidden;}
+.loader__fill{width:100%;height:100%;background:#fff;transform:scaleX(0);transform-origin:left;transition:transform 1280ms cubic-bezier(0.65,0,0.35,1);}
+.loader__fill.in{transform:scaleX(1);}
+
+/* ---------- shared components ---------- */
+.eyebrow{display:inline-flex;align-items:center;gap:0.5rem;font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.22em;}
+.eyebrow__dot{width:0.375rem;height:0.375rem;border-radius:var(--radius-pill);flex-shrink:0;}
+.eyebrow.dark{color:var(--ink-soft);}
+.eyebrow.dark .eyebrow__dot{background:var(--brand);}
+.eyebrow.light{color:rgba(255,255,255,.7);}
+.eyebrow.light .eyebrow__dot{background:var(--brand-light);}
+
+.clip-line{display:block;overflow:hidden;padding-bottom:0.14em;}
+.clip-line__inner{display:block;transform:translateY(115%);opacity:0;transition:transform 950ms cubic-bezier(0.16,1,0.3,1),opacity 950ms cubic-bezier(0.16,1,0.3,1);}
+.clip-line__inner.in{transform:translateY(0);opacity:1;}
+
+.clip-word{display:inline-block;overflow:hidden;padding-bottom:0.12em;vertical-align:top;}
+.clip-word__inner{display:inline-block;transform:translateY(115%);opacity:0;transition:transform 1100ms cubic-bezier(0.16,1,0.3,1),opacity 1100ms cubic-bezier(0.16,1,0.3,1);}
+.clip-word__inner.in{transform:translateY(0);opacity:1;}
+
+.word-fade{display:inline-block;transform:translateY(18px);opacity:0;transition:transform 700ms cubic-bezier(0.25,1,0.5,1),opacity 700ms cubic-bezier(0.25,1,0.5,1);}
+.word-fade.in{transform:translateY(0);opacity:1;}
+
+.pill-btn{display:inline-flex;align-items:center;gap:0.5rem;border-radius:var(--radius-pill);padding:0.875rem 1.75rem;font-size:0.875rem;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;transition:background .3s,color .3s;white-space:nowrap;}
+.pill-btn__arrow{width:1rem;height:1rem;transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0;}
+.pill-btn.light{background:#fff;color:var(--brand-deep);}
+.pill-btn.solid{background:var(--ink);color:#fff;}
+.pill-btn.outline{background:transparent;color:var(--ink);border:1px solid currentColor;}
+@media (min-width:769px){
+  .pill-btn:hover .pill-btn__arrow{transform:translateX(5px);}
+  .pill-btn.light:hover{background:var(--brand-light);color:#fff;}
+  .pill-btn.solid:hover{background:var(--brand-deep);}
+  .pill-btn.outline:hover{background:var(--ink);color:#fff;}
+}
+
+.arrow-btn{width:3rem;height:3rem;border-radius:var(--radius-pill);display:grid;place-items:center;border:1px solid transparent;transition:background .3s,border-color .3s,color .3s;flex-shrink:0;}
+@media (min-width:640px){ .arrow-btn{ width:3.5rem; height:3.5rem; } }
+.arrow-btn svg{width:1.25rem;height:1.25rem;transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);}
+.arrow-btn.prev svg{transform:scaleX(-1);}
+.arrow-btn.outline{border-color:var(--hairline);color:var(--ink);}
+.arrow-btn.solid{background:var(--ink);border-color:var(--ink);color:#fff;}
+@media (min-width:769px){
+  .arrow-btn:hover svg{transform:scale(1.15);}
+  .arrow-btn.prev:hover svg{transform:scaleX(-1) scale(1.15);}
+  .arrow-btn.outline:hover{border-color:var(--ink);}
+  .arrow-btn.solid:hover{background:var(--brand-deep);border-color:var(--brand-deep);}
+}
+
+.dots{display:flex;align-items:center;gap:0.5rem;}
+.dot{padding:0.375rem;}
+.dot__pill{display:block;height:0.375rem;width:0.375rem;border-radius:var(--radius-pill);transition:width .3s,background .3s;}
+.dots.dark .dot__pill{background:var(--ghost);}
+.dots.dark .dot[aria-current="true"] .dot__pill{width:1.25rem;background:var(--ink);}
+.dots.light .dot__pill{background:rgba(255,255,255,.4);}
+.dots.light .dot[aria-current="true"] .dot__pill{width:1.25rem;background:#fff;}
+
+/* ---------- header ---------- */
+.site-header{position:relative;z-index:20;display:flex;align-items:center;padding:1.5rem 1.5rem 0;font-size:0.75rem;color:#fff;}
+@media (min-width:640px){ .site-header{ padding:2rem 2.5rem 0; } }
+.site-header__col{flex:1;display:flex;align-items:center;min-width:0;}
+.site-header__nav{display:none;gap:2rem;}
+@media (min-width:1024px){ .site-header__nav{ display:flex; } }
+.site-header__nav a{color:rgba(255,255,255,.9);transition:color .3s;}
+@media (min-width:769px){ .site-header__nav a:hover{ color:#fff; } }
+.site-header__brand{justify-content:center;display:flex;align-items:center;gap:0.5rem;font-size:1rem;font-weight:500;text-transform:uppercase;letter-spacing:0.2em;white-space:nowrap;}
+.site-header__brand svg{width:1.25rem;height:1.25rem;flex-shrink:0;}
+.site-header__actions{justify-content:flex-end;gap:1rem;}
+@media (min-width:640px){ .site-header__actions{ gap:1.25rem; } }
+.btn-text-visit{display:none;text-transform:uppercase;letter-spacing:0.05em;}
+@media (min-width:640px){ .btn-text-visit{ display:inline; } }
+@media (min-width:769px){ .btn-text-visit:hover{ text-decoration:underline; } }
+.burger{width:2.5rem;height:2.5rem;display:grid;place-items:center;border-radius:var(--radius-pill);background:rgba(255,255,255,.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .3s;flex-shrink:0;}
+@media (min-width:769px){ .burger:hover{ background:rgba(255,255,255,.25); } }
+.burger__bars{display:flex;flex-direction:column;gap:0.3125rem;}
+.burger__bar{width:1rem;height:1px;background:#fff;display:block;}
+
+/* ---------- hero ---------- */
+.hero{position:relative;isolation:isolate;overflow:hidden;border-radius:var(--radius-card-lg);background:var(--brand-deep);color:#fff;height:calc(100svh - 1rem);min-height:36rem;display:flex;flex-direction:column;}
+@media (min-width:640px){ .hero{ height:calc(100svh - 1.5rem); } }
+.hero__bg{position:absolute;inset:0;z-index:-10;}
+.hero__bg-inner{position:absolute;left:0;right:0;top:-16%;height:132%;width:100%;will-change:transform;}
+.hero__bg-inner img{width:100%;height:100%;object-fit:cover;}
+.hero__overlay{position:absolute;inset:0;background:linear-gradient(to bottom, rgba(15,47,99,.65), rgba(15,47,99,.35), rgba(15,47,99,.75));}
+.hero__title-wrap{padding:1rem 1.5rem 0;}
+@media (min-width:640px){ .hero__title-wrap{ padding-left:2.5rem; padding-right:2.5rem; } }
+.hero__title{font-size:12.5vw;font-weight:500;text-transform:uppercase;line-height:0.85;letter-spacing:-0.02em;white-space:nowrap;}
+.hero__bottom{margin-top:auto;display:flex;flex-direction:column;gap:1.5rem;padding:0 1.5rem 2rem;}
+@media (min-width:640px){ .hero__bottom{ flex-direction:row; justify-content:space-between; align-items:flex-end; padding:0 2.5rem 2.5rem; } }
+.hero__tagline{font-size:2.4rem;font-weight:500;text-transform:uppercase;line-height:.95;letter-spacing:-0.01em;color:rgba(255,255,255,.85);}
+.hero__cluster{display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap;}
+
+.hero__slider{display:none;width:16rem;flex-direction:column;gap:0.75rem;}
+@media (min-width:768px){ .hero__slider{ display:flex; } }
+.slider-card{display:flex;gap:0.75rem;border-radius:1.5rem;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.1);padding:0.75rem;box-shadow:0 1rem 2rem rgba(15,47,99,.2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.slider-card__img{width:3.5rem;height:3.5rem;border-radius:0.75rem;overflow:hidden;flex-shrink:0;}
+.slider-card__img img{width:100%;height:100%;object-fit:cover;}
+.slider-card__body{display:flex;flex-direction:column;gap:0.2rem;min-width:0;justify-content:center;}
+.slider-card__brand{font-size:0.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.05em;}
+.slider-card__title{font-size:0.7rem;text-transform:uppercase;opacity:.8;}
+.slider-card__cta{font-size:0.65rem;text-decoration:underline;margin-top:0.15rem;display:inline-block;}
+
+.hero__membership{width:100%;max-width:20rem;border-radius:1.5rem;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.1);padding:0.75rem;box-shadow:0 1rem 2rem rgba(15,47,99,.2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:stretch;gap:0.75rem;}
+@media (min-width:640px){ .hero__membership{ max-width:15rem; } }
+.membership__left{display:flex;flex-direction:column;justify-content:space-between;min-width:0;}
+.membership__value{font-size:1.875rem;font-weight:500;line-height:1;}
+.membership__dots{display:flex;}
+.membership__dot{width:1.25rem;height:1.25rem;border-radius:var(--radius-pill);border:1px solid rgba(15,47,99,.4);margin-left:-0.5rem;}
+.membership__dot:first-child{margin-left:0;}
+.membership__caption{font-size:0.65rem;opacity:.8;}
+.membership__img{width:4rem;aspect-ratio:3/4;border-radius:0.75rem;overflow:hidden;flex-shrink:0;}
+.membership__img img{width:100%;height:100%;object-fit:cover;}
+
+/* ---------- trust ---------- */
+.trust{position:relative;isolation:isolate;overflow:hidden;background:var(--background);padding:4rem 1.5rem;}
+@media (min-width:640px){ .trust{ padding:5rem 2.5rem; } }
+.trust__badges{position:relative;z-index:20;display:flex;flex-direction:column;gap:1.5rem;}
+@media (min-width:640px){ .trust__badges{ flex-direction:row; justify-content:space-between; align-items:flex-start; } }
+.badge-percent{width:7rem;height:7rem;border-radius:var(--radius-pill);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;flex-shrink:0;}
+@media (min-width:640px){ .badge-percent{ width:8rem; height:8rem; } }
+.badge-percent__value{font-size:1.5rem;font-weight:500;}
+.badge-percent__caption{font-size:0.6rem;color:var(--ink-soft);max-width:7em;margin-top:.25rem;}
+.badge-card{max-width:28rem;display:flex;flex-direction:column;gap:1rem;border-radius:1.5rem;background:var(--surface);padding:1.25rem;}
+@media (min-width:640px){ .badge-card{ gap:1.25rem; padding:1.5rem; } }
+.badge-card__index{align-self:flex-start;border-radius:0.75rem;background:var(--background);padding:0.5rem 1rem;font-size:1.25rem;font-weight:500;}
+.badge-card__title{font-size:1.125rem;font-weight:500;}
+.badge-card__body{font-size:0.75rem;color:var(--ink-soft);line-height:1.6;margin-top:0.5rem;}
+
+.ghost-heading{pointer-events:none;position:relative;z-index:0;user-select:none;max-width:88rem;margin:3rem auto 0;font-size:8.2vw;font-weight:500;text-transform:uppercase;line-height:1.02;letter-spacing:-0.01em;}
+.ghost-row{display:flex;justify-content:space-between;}
+.ghost-word{color:var(--ghost);display:inline-block;will-change:transform;}
+.ghost-word.ink{color:var(--ink);}
+
+.coach-card{position:relative;z-index:10;margin:2rem auto 0;width:13rem;transform:rotate(6deg);}
+@media (min-width:640px){ .coach-card{ width:16rem; position:absolute; left:50%; top:50%; margin:0; transform:translate(-50%,-50%) rotate(6deg); } }
+.coach-card figure{position:relative;aspect-ratio:3/4;border-radius:1.5rem;background:var(--brand);overflow:hidden;}
+.coach-card__img-wrap{position:absolute;inset:0;}
+.coach-card__img-wrap img{width:100%;height:100%;object-fit:cover;}
+.coach-card__caption{position:absolute;left:0.75rem;right:0.75rem;bottom:0.75rem;border-radius:0.75rem;background:rgba(15,47,99,.4);color:#fff;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:0.5rem 0.75rem;}
+.coach-card__name{font-size:0.875rem;font-weight:500;}
+.coach-card__role{font-size:0.65rem;opacity:.8;}
+
+.trust__controls{position:relative;z-index:20;margin-top:3rem;display:flex;align-items:center;justify-content:space-between;}
+@media (min-width:640px){ .trust__controls{ margin-top:6rem; } }
+
+/* ---------- programs ---------- */
+.programs{background:var(--surface);padding:6rem 1.5rem;}
+@media (min-width:640px){ .programs{ padding-left:2.5rem; padding-right:2.5rem; } }
+.programs__title{font-size:3rem;font-weight:500;line-height:.95;letter-spacing:-0.01em;margin-top:1rem;}
+.program-list{margin-top:3.5rem;}
+.program-row{display:flex;align-items:center;gap:1.5rem;padding:1.75rem 0;border-top:1px solid var(--hairline);}
+.program-row:last-child{border-bottom:1px solid var(--hairline);}
+.program-row:focus-visible{background:var(--background);}
+.program-row__index{width:2.5rem;font-size:0.875rem;font-weight:500;color:var(--ink-soft);flex-shrink:0;}
+.program-row__body{flex:1;min-width:0;}
+.program-row__name{font-size:1.5rem;font-weight:500;letter-spacing:-0.01em;}
+@media (min-width:640px){ .program-row__name{ font-size:1.875rem; } }
+.program-row__desc{font-size:0.875rem;color:var(--ink-soft);margin-top:0.25rem;}
+.program-row__arrow-wrap{width:2.75rem;height:2.75rem;border-radius:var(--radius-pill);border:1px solid var(--hairline);display:grid;place-items:center;flex-shrink:0;overflow:hidden;}
+.program-row__arrow{width:1.1rem;height:1.1rem;transition:transform .35s cubic-bezier(0.34,1.56,0.64,1),opacity .35s;opacity:.55;}
+@media (min-width:769px){ .program-row:hover .program-row__arrow{ transform:translateX(8px); opacity:1; } }
+
+/* ---------- facilities ---------- */
+.facilities{background:var(--background);border-radius:var(--radius-card-lg);margin-top:-2.5rem;padding:4rem 1.5rem 5rem;position:relative;z-index:2;}
+@media (min-width:640px){ .facilities{ padding-left:2.5rem; padding-right:2.5rem; } }
+.facilities__grid{display:grid;grid-template-columns:1fr;align-items:end;gap:2.5rem;}
+@media (min-width:768px){ .facilities__grid{ grid-template-columns:1fr 1fr; } }
+.facilities__icon{width:4rem;height:4rem;border-radius:1.5rem;overflow:hidden;}
+.facilities__icon img{width:100%;height:100%;object-fit:cover;}
+.facilities__intro{max-width:24rem;}
+.facilities__title{font-size:3rem;font-weight:500;line-height:.95;letter-spacing:-0.01em;margin-top:1.5rem;}
+.facilities__body{font-size:0.875rem;color:var(--ink-soft);max-width:20rem;margin-top:1.5rem;}
+.facilities__cards{display:flex;align-items:flex-end;gap:1.25rem;}
+.court-card{flex:1;min-width:0;position:relative;aspect-ratio:3/4;border-radius:1.5rem;overflow:hidden;background:var(--surface);}
+.court-card:nth-child(2){margin-bottom:2rem;}
+.court-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(0.22,1,0.36,1);}
+@media (min-width:769px){ .court-card:hover img{ transform:scale(1.03); } }
+.court-card__caption{position:absolute;left:0.75rem;right:0.75rem;bottom:0.75rem;border-radius:0.75rem;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;padding:0.75rem 1rem;}
+.court-card__caption.clay{background:rgba(15,47,99,.4);}
+.court-card__caption.blue{background:rgba(11,110,151,.55);}
+.court-card__name{font-size:0.875rem;font-weight:500;}
+.court-card__desc{font-size:0.65rem;opacity:.85;margin-top:0.15rem;}
+
+/* ---------- stats ---------- */
+.stats{background:var(--brand-deep);color:#fff;border-radius:var(--radius-card-lg);margin-top:0.75rem;padding:5rem 1.5rem;}
+@media (min-width:640px){ .stats{ padding-left:2.5rem; padding-right:2.5rem; } }
+.stats__title{font-size:3rem;font-weight:500;line-height:.95;letter-spacing:-0.01em;margin-top:1rem;}
+.stats__grid{display:grid;grid-template-columns:repeat(2,1fr);column-gap:2rem;row-gap:3rem;margin-top:4rem;}
+@media (min-width:1024px){ .stats__grid{ grid-template-columns:repeat(4,1fr); } }
+.stat-cell{border-top:1px solid rgba(255,255,255,.2);padding-top:1.25rem;}
+.stat-cell__value{font-size:3.75rem;font-weight:500;letter-spacing:-0.01em;line-height:1.05;}
+@media (min-width:640px){ .stat-cell__value{ font-size:4.5rem; } }
+.stat-cell__label{font-size:0.875rem;color:rgba(255,255,255,.65);margin-top:0.75rem;}
+
+/* ---------- testimonials ---------- */
+.testimonials{background:var(--background);padding:5rem 1.5rem;}
+@media (min-width:640px){ .testimonials{ padding:6rem 2.5rem; } }
+.testimonials__title{font-size:3rem;font-weight:500;line-height:.95;letter-spacing:-0.01em;margin-top:1rem;}
+.testimonial-list{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-top:3.5rem;}
+@media (min-width:768px){ .testimonial-list{ grid-template-columns:repeat(3,1fr); } }
+.testimonial-card{display:flex;flex-direction:column;justify-content:space-between;height:100%;border-radius:1.5rem;background:var(--surface);padding:1.75rem;transition:transform .4s cubic-bezier(0.22,1,0.36,1);}
+@media (min-width:769px){ .testimonial-card:hover{ transform:translateY(-8px); } }
+.testimonial-card__glyph{font-size:2.25rem;color:var(--brand);line-height:1;}
+.testimonial-card__quote{font-size:1.125rem;line-height:1.6;color:var(--ink);margin-top:1rem;}
+.testimonial-card__footer{border-top:1px solid var(--hairline);padding-top:1rem;margin-top:1.5rem;}
+.testimonial-card__name{font-weight:500;}
+.testimonial-card__role{font-size:0.875rem;color:var(--ink-soft);margin-top:0.15rem;}
+
+/* ---------- footer ---------- */
+.site-footer{background:var(--brand-deep);color:#fff;border-radius:var(--radius-card-lg);margin-top:0.75rem;padding:3.5rem 1.5rem;}
+@media (min-width:640px){ .site-footer{ padding:4rem 2.5rem; } }
+.footer__cta{display:flex;flex-direction:column;gap:1.5rem;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:3.5rem;}
+@media (min-width:640px){ .footer__cta{ flex-direction:row; justify-content:space-between; align-items:flex-end; } }
+.footer__cta-title{font-size:3.75rem;font-weight:500;line-height:.92;letter-spacing:-0.01em;margin-top:1rem;}
+.footer__columns{display:grid;grid-template-columns:1fr;gap:2.5rem;padding:3.5rem 0;}
+@media (min-width:768px){ .footer__columns{ grid-template-columns:1.4fr 1fr 1fr 1fr; } }
+.footer__brand-col{max-width:20rem;}
+.footer__brand{display:flex;align-items:center;gap:0.5rem;font-size:1.125rem;font-weight:500;text-transform:uppercase;letter-spacing:0.2em;}
+.footer__brand svg{width:1.25rem;height:1.25rem;}
+.footer__blurb{font-size:0.875rem;color:rgba(255,255,255,.65);margin-top:1rem;}
+.footer__address{font-style:normal;margin-top:1.5rem;color:rgba(255,255,255,.8);font-size:0.875rem;display:flex;flex-direction:column;gap:0.35rem;}
+@media (min-width:769px){ .footer__address a:hover{ text-decoration:underline; } }
+.footer__address .muted{color:rgba(255,255,255,.55);}
+.footer__nav-heading{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.2em;color:rgba(255,255,255,.5);}
+.footer__nav-list{font-size:0.875rem;color:rgba(255,255,255,.8);margin-top:1rem;display:flex;flex-direction:column;gap:0.75rem;}
+@media (min-width:769px){ .footer__nav-list a:hover{ text-decoration:underline; } }
+.footer__bottom{border-top:1px solid rgba(255,255,255,.15);padding-top:2rem;font-size:0.875rem;color:rgba(255,255,255,.6);display:flex;flex-direction:column;gap:1.25rem;}
+@media (min-width:640px){ .footer__bottom{ flex-direction:row; justify-content:space-between; align-items:center; } }
+.footer__social,.footer__legal{display:flex;gap:1.25rem;flex-wrap:wrap;}
+@media (min-width:769px){ .footer__social a:hover,.footer__legal a:hover{ color:#fff; } }
+
+/* ---------- modal ---------- */
+.modal-overlay{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:0.75rem;pointer-events:none;}
+@media (min-width:640px){ .modal-overlay{ align-items:center; padding:1.5rem; } }
+.modal-overlay.open{pointer-events:auto;}
+.modal-backdrop{position:absolute;inset:0;background:rgba(15,47,99,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;}
+.modal-panel{position:relative;width:100%;max-width:32rem;max-height:92svh;overflow-y:auto;border-radius:2rem;background:var(--surface-card);padding:1.5rem;color:var(--ink);box-shadow:0 2rem 5rem rgba(15,47,99,.35);opacity:0;transform:translateY(28px) scale(0.96);}
+@media (min-width:640px){ .modal-panel{ padding:2rem; } }
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+.modal-title{font-size:2.25rem;font-weight:500;line-height:.95;letter-spacing:-0.01em;margin-top:0.75rem;}
+@media (min-width:640px){ .modal-title{ font-size:3rem; } }
+.modal-close{width:2.5rem;height:2.5rem;border-radius:var(--radius-pill);background:var(--surface);display:grid;place-items:center;transition:background .3s;flex-shrink:0;}
+@media (min-width:769px){ .modal-close:hover{ background:var(--hairline); } }
+.modal-close svg{width:1rem;height:1rem;transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);}
+@media (min-width:769px){ .modal-close:hover svg{ transform:rotate(90deg); } }
+.modal-form{margin-top:1.75rem;display:flex;flex-direction:column;gap:1rem;}
+.field{display:flex;flex-direction:column;gap:0.5rem;}
+.field label{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.18em;color:var(--ink-soft);}
+.field input,.field textarea{width:100%;border-radius:0.75rem;border:1px solid var(--hairline);background:var(--background);padding:0.75rem 1rem;font-size:0.875rem;font-family:inherit;color:var(--ink);transition:border-color .25s,box-shadow .25s;}
+.field input:focus,.field textarea:focus{border-color:var(--brand-light);box-shadow:0 0 0 3px rgba(87,144,230,.25);outline:none;}
+.field textarea{resize:vertical;}
+.modal-submit{align-self:flex-start;border-radius:var(--radius-pill);background:var(--ink);color:#fff;padding:0.875rem 1.75rem;font-size:0.875rem;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;transition:background .3s,opacity .3s;}
+@media (min-width:769px){ .modal-submit:hover:not(:disabled){ background:var(--brand-deep); } }
+.modal-submit:disabled{opacity:.6;cursor:default;}
+.modal-success{margin-top:2rem;border-radius:1.5rem;background:var(--surface);padding:1.5rem;text-align:center;}
+.modal-success__icon{width:3rem;height:3rem;border-radius:var(--radius-pill);background:var(--brand);display:grid;place-items:center;margin:0 auto;color:#fff;}
+.modal-success__icon svg{width:1.5rem;height:1.5rem;}
+.modal-success__title{font-size:1.125rem;font-weight:500;margin-top:1rem;}
+.modal-success__text{font-size:0.875rem;color:var(--ink-soft);margin-top:0.5rem;}
+.modal-success .pill-btn{margin-top:1.5rem;}
+
+/* ---------- menu overlay ---------- */
+.menu-overlay{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;pointer-events:none;}
+.menu-overlay.open{pointer-events:auto;}
+.menu-backdrop{position:absolute;inset:0;background:var(--brand-deep);opacity:0;}
+.menu-panel{position:relative;height:100%;display:flex;flex-direction:column;padding:0.5rem;opacity:0;transform:translateY(-24px);color:#fff;}
+@media (min-width:640px){ .menu-panel{ padding:0.75rem; } }
+.menu-panel__inner{flex:1;display:flex;flex-direction:column;padding:1.5rem;min-height:0;}
+@media (min-width:640px){ .menu-panel__inner{ padding:2.5rem; } }
+.menu-top{display:flex;align-items:center;justify-content:space-between;}
+.menu-brand{display:flex;align-items:center;gap:0.5rem;text-transform:uppercase;letter-spacing:0.2em;font-weight:500;}
+.menu-brand svg{width:1.25rem;height:1.25rem;}
+.menu-close{width:2.5rem;height:2.5rem;border-radius:var(--radius-pill);background:rgba(255,255,255,.15);display:grid;place-items:center;transition:background .3s;}
+@media (min-width:769px){ .menu-close:hover{ background:rgba(255,255,255,.25); } }
+.menu-close svg{width:1rem;height:1rem;transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);}
+@media (min-width:769px){ .menu-close:hover svg{ transform:rotate(90deg); } }
+.menu-nav{flex:1;display:flex;flex-direction:column;justify-content:center;gap:0.5rem;overflow-y:auto;}
+.menu-nav a{display:block;font-size:3rem;font-weight:500;letter-spacing:-0.01em;opacity:0;transform:translateY(28px);transition:color .3s;}
+@media (min-width:640px){ .menu-nav a{ font-size:4.5rem; } }
+@media (min-width:769px){ .menu-nav a:hover{ color:var(--brand-light); } }
+.menu-bottom{border-top:1px solid rgba(255,255,255,.15);padding-top:2rem;display:flex;flex-direction:column;gap:1.5rem;}
+@media (min-width:640px){ .menu-bottom{ flex-direction:row; justify-content:space-between; align-items:center; } }
+.menu-social{display:flex;gap:1.25rem;font-size:0.875rem;color:rgba(255,255,255,.7);flex-wrap:wrap;}
+@media (min-width:769px){ .menu-social a:hover{ color:#fff; } }
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="loader__mark" id="loader-mark">
+    <span id="loader-mark-icon"></span>
+    <span class="loader__wordmark" id="loader-wordmark"></span>
+  </div>
+  <div class="loader__track"><div class="loader__fill" id="loader-fill"></div></div>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="hero__bg">
+      <div class="hero__bg-inner" id="hero-bg-inner">
+        <img id="hero-bg-img" src="" alt="" fetchpriority="high" loading="eager">
+      </div>
+      <div class="hero__overlay"></div>
+    </div>
+    <header class="site-header">
+      <div class="site-header__col site-header__nav" id="header-nav"></div>
+      <div class="site-header__col site-header__brand" id="header-brand"></div>
+      <div class="site-header__col site-header__actions">
+        <button type="button" class="btn-text-visit" id="header-book"></button>
+        <button type="button" class="burger" id="header-burger" aria-haspopup="dialog">
+          <span class="burger__bars"><span class="burger__bar"></span><span class="burger__bar"></span></span>
+        </button>
+      </div>
+    </header>
+    <h1 class="hero__title-wrap" id="hero-title-wrap"><span class="hero__title" id="hero-title"></span></h1>
+    <div class="hero__bottom">
+      <p class="hero__tagline" id="hero-tagline"></p>
+      <div class="hero__cluster">
+        <div class="hero__slider" id="hero-slider">
+          <div class="slider-card" id="slider-card"></div>
+          <div class="dots light" id="slider-dots"></div>
+        </div>
+        <article class="hero__membership" id="hero-membership"></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust" id="trust-section">
+    <div class="trust__badges">
+      <div class="badge-percent" id="badge-percent"></div>
+      <article class="badge-card" id="badge-card"></article>
+    </div>
+    <h2 class="ghost-heading" id="trust-title">
+      <div class="ghost-row">
+        <span class="ghost-word" data-pos="tl"><span class="clip-word"><span class="clip-word__inner"></span></span></span>
+        <span class="ghost-word" data-pos="tr"><span class="clip-word"><span class="clip-word__inner"></span></span></span>
+      </div>
+      <div class="ghost-row">
+        <span class="ghost-word ink" data-pos="bl"><span class="clip-word"><span class="clip-word__inner"></span></span></span>
+        <span class="ghost-word" data-pos="br"><span class="clip-word"><span class="clip-word__inner"></span></span></span>
+      </div>
+    </h2>
+    <div class="coach-card" id="coach-card">
+      <figure>
+        <div class="coach-card__img-wrap"><img id="coach-img" src="" alt="" loading="lazy"></div>
+        <figcaption class="coach-card__caption">
+          <div class="coach-card__name" id="coach-name"></div>
+          <div class="coach-card__role" id="coach-role"></div>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="trust__controls">
+      <button type="button" class="arrow-btn outline prev" id="trust-prev"></button>
+      <div class="dots dark" id="trust-dots"></div>
+      <button type="button" class="arrow-btn solid next" id="trust-next"></button>
+    </div>
+  </section>
+
+  <section class="programs" id="programs">
+    <div id="programs-eyebrow"></div>
+    <h2 class="programs__title" id="programs-title"></h2>
+    <ul class="program-list" id="program-list"></ul>
+  </section>
+
+  <section class="facilities" id="facilities">
+    <div class="facilities__grid">
+      <div class="facilities__intro">
+        <div class="facilities__icon" id="facilities-icon"><img src="" alt="" loading="lazy"></div>
+        <h2 class="facilities__title" id="facilities-title"></h2>
+        <p class="facilities__body" id="facilities-body"></p>
+      </div>
+      <div class="facilities__cards" id="facilities-cards"></div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div id="stats-eyebrow"></div>
+    <h2 class="stats__title" id="stats-title"></h2>
+    <dl class="stats__grid" id="stats-grid"></dl>
+  </section>
+
+  <section class="testimonials" id="testimonials">
+    <div id="testimonials-eyebrow"></div>
+    <h2 class="testimonials__title" id="testimonials-title"></h2>
+    <ul class="testimonial-list" id="testimonial-list"></ul>
+  </section>
+
+  <footer class="site-footer" id="contact">
+    <div class="footer__cta">
+      <div>
+        <div id="footer-eyebrow"></div>
+        <p class="footer__cta-title" id="footer-cta-title"></p>
+      </div>
+      <button type="button" class="pill-btn light" id="footer-book"></button>
+    </div>
+    <div class="footer__columns" id="footer-columns"></div>
+    <div class="footer__bottom">
+      <div id="footer-copyright"></div>
+      <nav class="footer__social" id="footer-social"></nav>
+      <nav class="footer__legal" id="footer-legal"></nav>
+    </div>
+  </footer>
+</main>
+
+<div class="menu-overlay" id="menu-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="menu-backdrop" id="menu-backdrop"></div>
+  <div class="menu-panel" id="menu-panel">
+    <div class="menu-panel__inner">
+      <div class="menu-top">
+        <div class="menu-brand" id="menu-brand"></div>
+        <button type="button" class="menu-close" id="menu-close"></button>
+      </div>
+      <nav class="menu-nav" id="menu-nav"></nav>
+      <div class="menu-bottom">
+        <button type="button" class="pill-btn light" id="menu-book"></button>
+        <nav class="menu-social" id="menu-social"></nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-panel" id="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div>
+        <div id="modal-eyebrow"></div>
+        <h2 class="modal-title" id="modal-title"></h2>
+      </div>
+      <button type="button" class="modal-close" id="modal-close"></button>
+    </div>
+    <form class="modal-form" id="modal-form" novalidate>
+      <div class="field">
+        <label for="field-name" id="label-name"></label>
+        <input type="text" id="field-name" name="name" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="field-email" id="label-email"></label>
+        <input type="email" id="field-email" name="email" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="field-message" id="label-message"></label>
+        <textarea id="field-message" name="message" rows="3"></textarea>
+      </div>
+      <button type="submit" class="modal-submit" id="modal-submit"></button>
+    </form>
+    <div class="modal-success" id="modal-success" hidden>
+      <div class="modal-success__icon"><span id="modal-success-icon"></span></div>
+      <div class="modal-success__title" id="modal-success-title"></div>
+      <div class="modal-success__text" id="modal-success-text"></div>
+      <button type="button" class="pill-btn solid" id="modal-done"></button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import Lenis from 'lenis';
+
+const CONTENT = {
+  site: {
+    name: "Baseline",
+    fullName: "Baseline Tennis Club & Academy",
+    pageTitle: "Baseline — Tennis Club & Academy"
+  },
+  header: {
+    leftNav: [
+      { label: "Programs & Coaches", href: "#programs" },
+      { label: "Club & Events", href: "#facilities" }
+    ],
+    bookVisit: "Book a Visit",
+    openMenuAriaLabel: "Open menu"
+  },
+  hero: {
+    title: "Own The Court",
+    taglineLines: ["Show Up,", "Level Up"],
+    backgroundAlt: "Player lunging for a shot on a hard court",
+    collections: [
+      { image: "2.webp", brand: "Baseline Pro", title: "Featured Gear", cta: "Shop the kit", alt: "Player driving a backhand on a hard court" },
+      { image: "3.webp", brand: "Court Series", title: "Summer Drop", cta: "View the line", alt: "Player stretching for a forehand on clay" },
+      { image: "5.webp", brand: "Academy Kit", title: "Junior Range", cta: "Browse juniors", alt: "Player set in a ready stance on clay" }
+    ],
+    membership: {
+      value: "9K+",
+      caption: "Members on court",
+      image: "1.webp",
+      imageAlt: "Player waiting to return on a clay court"
+    }
+  },
+  trust: {
+    percentage: "100%",
+    percentageCaption: "Coaching built around your game",
+    badgeIndex: "#01",
+    badgeTitle: "Trusted by serious players",
+    badgeBody: "From first-timers to nationally ranked juniors, players train here because the progress shows up on the scoreboard.",
+    previousAriaLabel: "Previous coach",
+    nextAriaLabel: "Next coach",
+    slides: [
+      { headline: ["Expert", "Result-", "Driven", "Coaching"], image: "5.webp", name: "Marco Vidal", role: "Head Coach", alt: "Head coach set in a ready stance on clay" },
+      { headline: ["Sharper", "Faster", "Stronger", "Player"], image: "4.webp", name: "Elena Sokolova", role: "Performance Coach", alt: "Performance coach following through on a serve" },
+      { headline: ["Future", "Champions", "Start", "Here"], image: "1.webp", name: "James Okoro", role: "Juniors Lead", alt: "Juniors lead waiting to return on clay" }
+    ]
+  },
+  programs: {
+    eyebrow: "Training programs",
+    titleLines: ["Built for", "every level"],
+    items: [
+      { index: "01", name: "Junior Development", description: "Fundamentals, footwork, and match play for ages 6–14.", href: "#junior" },
+      { index: "02", name: "Performance Squad", description: "High-volume training for competitive and ranked players.", href: "#performance" },
+      { index: "03", name: "Adult Clinics", description: "Small-group sessions to sharpen technique and fitness.", href: "#adult" },
+      { index: "04", name: "Private Coaching", description: "One-to-one sessions tailored to your goals and schedule.", href: "#private" }
+    ]
+  },
+  facilities: {
+    titleLines: ["Tour Our", "World-Class", "Courts"],
+    body: "Reserve a court for focused practice, squad drills, or private sessions — and train in the same conditions you'll compete in.",
+    introImageAlt: "Player stretching for a forehand on clay",
+    courts: [
+      { name: "Redline Clay", description: "A fast outdoor clay court tuned for long, physical rallies.", image: "1.webp", alt: "Player on the baseline of an outdoor clay court", tone: "clay" },
+      { name: "Harbor Court", description: "A sheltered hard court built for precision and night play.", image: "4.webp", alt: "Player following through on a blue hard court", tone: "blue" }
+    ]
+  },
+  stats: {
+    eyebrow: "By the numbers",
+    titleLines: ["A club that", "keeps score"],
+    items: [
+      { value: "24", label: "Certified coaches" },
+      { value: "12", label: "Championship courts" },
+      { value: "9K+", label: "Members training" },
+      { value: "15", label: "Years on the baseline" }
+    ]
+  },
+  testimonials: {
+    eyebrow: "What players say",
+    titleLines: ["Loved by", "the locker room"],
+    quoteGlyph: "\"",
+    items: [
+      { quote: "I added a level to my serve in one season. The coaching is detailed and it actually sticks.", name: "Priya Anand", role: "Performance Squad" },
+      { quote: "Best courts in the city and a team that treats every member like a competitor.", name: "Lukas Brenner", role: "Adult Clinics" },
+      { quote: "My daughter went from shy beginner to club champion. Worth every minute.", name: "Dana Okafor", role: "Parent, Junior Development" }
+    ]
+  },
+  footer: {
+    eyebrow: "Get started",
+    ctaLines: ["Ready to", "play?"],
+    bookVisit: "Book a Visit",
+    blurb: "A members' tennis club and academy where focused coaching meets championship courts.",
+    contact: {
+      email: "play@baseline.club",
+      phoneDisplay: "+1 (212) 555-0148",
+      phoneHref: "tel:+12125550148",
+      address: "120 Court Lane, New York"
+    },
+    navColumns: [
+      { heading: "Programs", links: [
+        { label: "Junior Development", href: "#junior" },
+        { label: "Performance Squad", href: "#performance" },
+        { label: "Adult Clinics", href: "#adult" },
+        { label: "Private Coaching", href: "#private" }
+      ]},
+      { heading: "Club", links: [
+        { label: "Membership", href: "#membership" },
+        { label: "Facilities", href: "#facilities" },
+        { label: "Events", href: "#club" },
+        { label: "Pro Shop", href: "#shop" }
+      ]},
+      { heading: "Company", links: [
+        { label: "About", href: "#about" },
+        { label: "Coaches", href: "#programs" },
+        { label: "Careers", href: "#careers" },
+        { label: "Contact", href: "#contact" }
+      ]}
+    ],
+    copyright: "© 2026 Baseline Tennis Club. All rights reserved.",
+    socialLinks: [
+      { label: "Instagram", href: "#instagram" },
+      { label: "X", href: "#x" },
+      { label: "YouTube", href: "#youtube" },
+      { label: "LinkedIn", href: "#linkedin" }
+    ],
+    legalLinks: [
+      { label: "Privacy", href: "#privacy" },
+      { label: "Terms", href: "#terms" }
+    ]
+  },
+  menu: {
+    closeAriaLabel: "Close menu",
+    links: [
+      { label: "Programs", href: "#programs" },
+      { label: "Facilities", href: "#facilities" },
+      { label: "Reviews", href: "#testimonials" },
+      { label: "Contact", href: "#contact" }
+    ],
+    bookVisit: "Book a Visit"
+  },
+  contactModal: {
+    eyebrow: "Book a visit",
+    titleLines: ["Come see", "the courts"],
+    closeAriaLabel: "Close contact form",
+    fields: {
+      name: { label: "Full name", placeholder: "Alex Rivera" },
+      email: { label: "Email", placeholder: "you@email.com" },
+      message: { label: "What would you like to play?", placeholder: "I'd love to try a private lesson on the clay courts…" }
+    },
+    submit: "Request a visit",
+    submitting: "Sending…",
+    successTitle: "Request received",
+    successMessage: ({ firstName }) => `Thanks, ${firstName || "there"} — our team will be in touch to lock in your visit.`,
+    done: "Done"
+  },
+  accessibility: {
+    carouselGoTo: (number) => `Go to slide ${number}`,
+    arrowRight: "Go forward",
+    arrowLeft: "Go back"
+  }
+};
+
+const ASSET_BASE = "https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000";
+const asset = (name) => `${ASSET_BASE}/${name}`;
+
+const ICONS = {
+  mark: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M4.8 5.6A9 9 0 0 0 4.8 18.4"/><path d="M19.2 5.6a9 9 0 0 1 0 12.8"/></svg>`,
+  arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
+  close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>`
+};
+
+document.title = CONTENT.site.pageTitle;
+
+/* ---------- dom helpers ---------- */
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+function el(tag, attrs = {}, children = []) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") node.className = v;
+    else if (k === "html") node.innerHTML = v;
+    else if (k === "text") node.textContent = v;
+    else if (k.startsWith("on") && typeof v === "function") node.addEventListener(k.slice(2), v);
+    else if (v !== undefined && v !== null) node.setAttribute(k, v);
+  }
+  for (const c of [].concat(children)) {
+    if (c == null) continue;
+    node.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  return node;
+}
+
+function eyebrow(text, tone) {
+  return el("div", { class: `eyebrow ${tone}` }, [
+    el("span", { class: "eyebrow__dot" }),
+    el("span", { text })
+  ]);
+}
+
+function arrowSVG() {
+  const span = document.createElement("span");
+  span.innerHTML = ICONS.arrow;
+  return span.firstElementChild;
+}
+
+/* ---------- adaptive rem grid ---------- */
+const FONT_BASE = 16, BASE_W = 1920, COEF = 0.6666;
+function applyAdaptiveScale() {
+  const reduction = ((BASE_W - window.innerWidth) / BASE_W) * 100 * COEF;
+  const size = FONT_BASE - (FONT_BASE * reduction) / 100;
+  if (size > FONT_BASE) document.documentElement.style.fontSize = size + "px";
+  else document.documentElement.style.removeProperty("font-size");
+}
+applyAdaptiveScale();
+window.addEventListener("resize", applyAdaptiveScale);
+
+/* ---------- scroll lock ---------- */
+let lockCount = 0;
+function lockScroll() {
+  lockCount++;
+  document.documentElement.style.position = "relative";
+  document.documentElement.style.overflow = "hidden";
+  document.documentElement.style.height = "100%";
+  lenis.stop();
+}
+function unlockScroll() {
+  lockCount = Math.max(0, lockCount - 1);
+  if (lockCount === 0) {
+    document.documentElement.style.position = "";
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.height = "";
+    lenis.start();
+  }
+}
+
+/* ---------- lenis ---------- */
+const lenis = new Lenis({ smoothWheel: true });
+let lastT = 0;
+function raf(t) {
+  lenis.raf(t);
+  const dt = lastT ? Math.min((t - lastT) / 1000, 0.05) : 0;
+  lastT = t;
+  tickSprings(dt);
+  updateParallax();
+  requestAnimationFrame(raf);
+}
+requestAnimationFrame(raf);
+window.scrollTo(0, 0);
+
+document.addEventListener("click", (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const id = a.getAttribute("href");
+  if (id.length > 1 && document.querySelector(id)) {
+    e.preventDefault();
+    lenis.scrollTo(id);
+  }
+});
+
+/* ---------- spring driver ---------- */
+const activeSprings = new Set();
+function createSpringState(initial = 0) {
+  return { value: initial, velocity: 0, target: initial, tension: 200, friction: 26, onUpdate: null, onComplete: null };
+}
+function springTo(state, target, config, onUpdate, onComplete) {
+  state.target = target;
+  state.tension = config.tension;
+  state.friction = config.friction;
+  state.onUpdate = onUpdate || state.onUpdate;
+  state.onComplete = onComplete || null;
+  activeSprings.add(state);
+}
+function tickSprings(dt) {
+  if (!dt) return;
+  for (const s of activeSprings) {
+    const force = -s.tension * (s.value - s.target) - s.friction * s.velocity;
+    s.velocity += force * dt;
+    s.value += s.velocity * dt;
+    if (s.onUpdate) s.onUpdate(s.value);
+    if (Math.abs(s.target - s.value) < 0.001 && Math.abs(s.velocity) < 0.02) {
+      s.value = s.target;
+      s.velocity = 0;
+      if (s.onUpdate) s.onUpdate(s.value);
+      activeSprings.delete(s);
+      const cb = s.onComplete;
+      s.onComplete = null;
+      if (cb) cb();
+    }
+  }
+}
+
+/* ---------- scroll parallax ---------- */
+const parallaxItems = [];
+function addParallax(getElm, from, to, axis, unit, getRect) {
+  parallaxItems.push({ getElm, from, to, axis, unit, getRect });
+}
+function updateParallax() {
+  const vh = window.innerHeight;
+  for (const p of parallaxItems) {
+    const elm = p.getElm();
+    if (!elm) continue;
+    const rect = p.getRect();
+    if (!rect) continue;
+    let progress = (vh - rect.top) / (vh + rect.height);
+    progress = Math.min(1, Math.max(0, progress));
+    const val = p.from + (p.to - p.from) * progress;
+    elm.style.transform = `translate${p.axis}(${val}${p.unit})`;
+  }
+}
+
+/* ---------- generic spring reveal (Inview) ---------- */
+function springReveal(elm, from, to, config, { delay = 0, threshold = 0.2 } = {}) {
+  const state = {
+    x: createSpringState(from.x ?? 0),
+    y: createSpringState(from.y ?? 0),
+    scale: createSpringState(from.scale ?? 1),
+    opacity: createSpringState(from.opacity ?? 1)
+  };
+  function apply() {
+    elm.style.opacity = String(state.opacity.value);
+    elm.style.transform = `translate3d(${state.x.value}px, ${state.y.value}px, 0) scale(${state.scale.value})`;
+  }
+  apply();
+  let remaining = 0;
+  function done() {
+    remaining--;
+    if (remaining <= 0) {
+      elm.style.transform = "";
+      elm.style.opacity = "";
+    }
+  }
+  function play() {
+    const keys = ["x", "y", "scale", "opacity"].filter((k) => to[k] !== undefined);
+    remaining = keys.length;
+    keys.forEach((k) => springTo(state[k], to[k], config, apply, done));
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setTimeout(play, delay);
+        io.unobserve(elm);
+      }
+    });
+  }, { threshold });
+  io.observe(elm);
+  return { play };
+}
+
+/* ---------- clip-mask word/line reveal ---------- */
+function buildClipLines(container, lines) {
+  container.innerHTML = "";
+  const inners = [];
+  lines.forEach((line) => {
+    const inner = el("span", { class: "clip-line__inner", text: line });
+    container.append(el("span", { class: "clip-line" }, [inner]));
+    inners.push(inner);
+  });
+  return inners;
+}
+function buildClipWords(container, words) {
+  container.innerHTML = "";
+  const inners = [];
+  words.forEach((w, i) => {
+    const inner = el("span", { class: "clip-word__inner", text: w });
+    container.append(el("span", { class: "clip-word" }, [inner]));
+    if (i < words.length - 1) container.append(document.createTextNode(" "));
+    inners.push(inner);
+  });
+  return inners;
+}
+function playClipReveal(inners, { stagger = 0, baseDelay = 0, duration = 950 } = {}) {
+  inners.forEach((inner, i) => {
+    inner.style.transitionDuration = duration + "ms";
+    inner.style.transitionDelay = baseDelay + i * stagger + "ms";
+  });
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => inners.forEach((inner) => inner.classList.add("in")));
+  });
+}
+function resetClipReveal(inners) {
+  inners.forEach((inner) => inner.classList.remove("in"));
+  void inners[0]?.offsetHeight;
+}
+function stackedLines(container, lines, opts = {}) {
+  const inners = buildClipLines(container, lines);
+  playClipReveal(inners, { stagger: 120, baseDelay: 0, duration: 950, ...opts });
+  return inners;
+}
+function stackedLinesInview(container, lines, opts = {}) {
+  const inners = buildClipLines(container, lines);
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        playClipReveal(inners, { stagger: 120, baseDelay: 0, duration: 950, ...opts });
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  io.observe(container);
+  return inners;
+}
+
+/* ---------- word fade reveal ---------- */
+function buildWordFade(container, text) {
+  container.innerHTML = "";
+  const words = text.split(" ");
+  const spans = [];
+  words.forEach((w, i) => {
+    const s = el("span", { class: "word-fade", text: w });
+    container.append(s);
+    if (i < words.length - 1) container.append(document.createTextNode(" "));
+    spans.push(s);
+  });
+  return spans;
+}
+function playWordFade(spans, { wordStagger = 28, delayIn = 0, duration = 700 } = {}) {
+  spans.forEach((s, i) => {
+    s.style.transitionDuration = duration + "ms";
+    s.style.transitionDelay = delayIn + i * wordStagger + "ms";
+  });
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => spans.forEach((s) => s.classList.add("in")));
+  });
+}
+
+/* ---------- crossfade (carousels) ---------- */
+function initCrossfade(elm) {
+  elm._cf = { o: createSpringState(1), y: createSpringState(0), s: createSpringState(1) };
+}
+function applyCrossfade(elm) {
+  const s = elm._cf;
+  elm.style.opacity = String(s.o.value);
+  elm.style.transform = `translateY(${s.y.value}px) scale(${s.s.value})`;
+}
+function crossfadeAdvance(elm, renderFn, config = { tension: 210, friction: 24 }, withMotion = true) {
+  const s = elm._cf;
+  const to = withMotion ? { o: 0, y: 16, s: 0.96 } : { o: 0, y: 0, s: 1 };
+  springTo(s.o, to.o, config, () => applyCrossfade(elm), () => {
+    renderFn();
+    s.o.value = 0; s.o.velocity = 0;
+    s.y.value = to.y; s.y.velocity = 0;
+    s.s.value = to.s; s.s.velocity = 0;
+    applyCrossfade(elm);
+    springTo(s.o, 1, config, () => applyCrossfade(elm));
+    springTo(s.y, 0, config, () => applyCrossfade(elm));
+    springTo(s.s, 1, config, () => applyCrossfade(elm));
+  });
+  springTo(s.y, to.y, config, () => applyCrossfade(elm));
+  springTo(s.s, to.s, config, () => applyCrossfade(elm));
+}
+
+/* ---------- loader ---------- */
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MIN_VISIBLE_MS = reducedMotion ? 200 : 1400;
+const MAX_VISIBLE_MS = reducedMotion ? 200 : 2600;
+const EXIT_MS = reducedMotion ? 0 : 850;
+
+let ready = false;
+const readyCallbacks = [];
+function onReady(cb) {
+  if (ready) cb();
+  else readyCallbacks.push(cb);
+}
+
+function initLoader() {
+  const loaderEl = $("#loader");
+  const markEl = $("#loader-mark");
+  const fillEl = $("#loader-fill");
+  $("#loader-mark-icon").innerHTML = ICONS.mark;
+  $("#loader-wordmark").textContent = CONTENT.site.name;
+
+  lockScroll();
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      markEl.classList.add("in");
+      fillEl.style.transitionDelay = "120ms";
+      fillEl.style.transitionDuration = (MIN_VISIBLE_MS - 120) + "ms";
+      fillEl.classList.add("in");
+    });
+  });
+
+  let finished = false;
+  function finishLoader() {
+    if (finished) return;
+    finished = true;
+    ready = true;
+    readyCallbacks.splice(0).forEach((cb) => cb());
+    unlockScroll();
+    loaderEl.classList.add("exit");
+    setTimeout(() => loaderEl.remove(), EXIT_MS);
+  }
+
+  const minTimer = new Promise((res) => setTimeout(res, MIN_VISIBLE_MS));
+  const loadEvent = document.readyState === "complete"
+    ? Promise.resolve()
+    : new Promise((res) => window.addEventListener("load", res, { once: true }));
+  Promise.all([minTimer, loadEvent]).then(finishLoader);
+  setTimeout(finishLoader, MAX_VISIBLE_MS);
+}
+
+/* ---------- header ---------- */
+function renderHeader() {
+  const nav = $("#header-nav");
+  CONTENT.header.leftNav.forEach((item) => {
+    nav.append(el("a", { href: item.href, text: item.label }));
+  });
+
+  const brand = $("#header-brand");
+  brand.innerHTML = ICONS.mark;
+  brand.append(el("span", { text: CONTENT.site.name }));
+
+  const book = $("#header-book");
+  book.textContent = CONTENT.header.bookVisit;
+  book.addEventListener("click", openModal);
+
+  const burger = $("#header-burger");
+  burger.setAttribute("aria-label", CONTENT.header.openMenuAriaLabel);
+  burger.addEventListener("click", openMenu);
+}
+
+/* ---------- hero ---------- */
+let heroSliderTimer = null;
+
+function renderHero() {
+  const bgImg = $("#hero-bg-img");
+  bgImg.src = asset("hero/hero-court.webp");
+  bgImg.alt = CONTENT.hero.backgroundAlt;
+  addParallax(
+    () => $("#hero-bg-inner"),
+    0, 12, "Y", "%",
+    () => $(".hero").getBoundingClientRect()
+  );
+
+  const titleEl = $("#hero-title");
+  const titleWords = buildClipWords(titleEl, CONTENT.hero.title.split(" "));
+
+  const taglineEl = $("#hero-tagline");
+  const taglineInners = buildClipLines(taglineEl, CONTENT.hero.taglineLines);
+
+  renderCollectionSlider();
+  renderMembership();
+
+  onReady(() => {
+    playClipReveal(titleWords, { stagger: 140, duration: 1100 });
+    playClipReveal(taglineInners, { baseDelay: 350, stagger: 110, duration: 900 });
+
+    const sliderEl = $("#hero-slider");
+    springReveal(sliderEl, { opacity: 0, y: 28 }, { opacity: 1, y: 0 }, { tension: 200, friction: 26 }, { delay: 650 });
+
+    const membershipEl = $("#hero-membership");
+    springReveal(membershipEl, { opacity: 0, y: 28 }, { opacity: 1, y: 0 }, { tension: 200, friction: 26 }, { delay: 780 });
+
+    setTimeout(startCollectionAutoplay, 650);
+  });
+}
+
+let collectionIndex = 0;
+function renderCollectionCard() {
+  const item = CONTENT.hero.collections[collectionIndex];
+  const card = $("#slider-card");
+  card.innerHTML = "";
+  card.append(
+    el("div", { class: "slider-card__img" }, [
+      el("img", { src: asset(item.image), alt: item.alt, loading: "lazy" })
+    ]),
+    el("div", { class: "slider-card__body" }, [
+      el("span", { class: "slider-card__brand", text: item.brand }),
+      el("span", { class: "slider-card__title", text: item.title }),
+      el("a", { class: "slider-card__cta", href: "#programs", text: `${item.cta} →` })
+    ])
+  );
+}
+function renderCollectionSlider() {
+  const card = $("#slider-card");
+  initCrossfade(card);
+  renderCollectionCard();
+
+  const dotsEl = $("#slider-dots");
+  dotsEl.innerHTML = "";
+  CONTENT.hero.collections.forEach((_, i) => {
+    const dot = el("button", { type: "button", class: "dot", "aria-current": i === collectionIndex ? "true" : "false", "aria-label": CONTENT.accessibility.carouselGoTo(i + 1) }, [
+      el("span", { class: "dot__pill" })
+    ]);
+    dot.addEventListener("click", () => goToCollection(i));
+    dotsEl.append(dot);
+  });
+}
+function updateCollectionDots() {
+  $$("#slider-dots .dot").forEach((d, i) => d.setAttribute("aria-current", i === collectionIndex ? "true" : "false"));
+}
+function goToCollection(i) {
+  if (i === collectionIndex) return;
+  collectionIndex = i;
+  crossfadeAdvance($("#slider-card"), renderCollectionCard, { tension: 210, friction: 24 });
+  updateCollectionDots();
+  restartCollectionAutoplay();
+}
+function advanceCollection() {
+  collectionIndex = (collectionIndex + 1) % CONTENT.hero.collections.length;
+  crossfadeAdvance($("#slider-card"), renderCollectionCard, { tension: 210, friction: 24 });
+  updateCollectionDots();
+}
+function startCollectionAutoplay() {
+  if (heroSliderTimer) return;
+  heroSliderTimer = setInterval(advanceCollection, 3800);
+}
+function restartCollectionAutoplay() {
+  if (heroSliderTimer) { clearInterval(heroSliderTimer); heroSliderTimer = null; }
+  startCollectionAutoplay();
+}
+
+function renderMembership() {
+  const m = CONTENT.hero.membership;
+  const wrap = $("#hero-membership");
+  wrap.innerHTML = "";
+  const dotColors = ["#5790e6", "#c2e029", "#0b6e97", "#ffffff"];
+  wrap.append(
+    el("div", { class: "membership__left" }, [
+      el("div", { class: "membership__value", text: m.value }),
+      el("div", { class: "membership__dots" }, dotColors.map((c) => el("span", { class: "membership__dot", style: `background:${c}` }))),
+      el("div", { class: "membership__caption", text: m.caption })
+    ]),
+    el("div", { class: "membership__img" }, [
+      el("img", { src: asset(m.image), alt: m.imageAlt, loading: "lazy" })
+    ])
+  );
+}
+
+/* ---------- trust ---------- */
+let trustIndex = 0;
+const ghostWordInners = { tl: null, tr: null, bl: null, br: null };
+
+function renderTrust() {
+  const t = CONTENT.trust;
+
+  const percentEl = $("#badge-percent");
+  percentEl.innerHTML = "";
+  percentEl.append(
+    el("div", { class: "badge-percent__value", text: t.percentage }),
+    el("div", { class: "badge-percent__caption", text: t.percentageCaption })
+  );
+
+  const badgeCardEl = $("#badge-card");
+  badgeCardEl.innerHTML = "";
+  badgeCardEl.append(
+    el("div", { class: "badge-card__index", text: t.badgeIndex }),
+    el("div", {}, [
+      el("div", { class: "badge-card__title", text: t.badgeTitle }),
+      el("div", { class: "badge-card__body", text: t.badgeBody })
+    ])
+  );
+
+  ["tl", "tr", "bl", "br"].forEach((pos) => {
+    const wordEl = $(`.ghost-word[data-pos="${pos}"]`);
+    ghostWordInners[pos] = $(".clip-word__inner", wordEl);
+  });
+
+  const ranges = {
+    tl: [-3, 3], tr: [3, -3], bl: [-2, 4], br: [4, -3]
+  };
+  Object.entries(ranges).forEach(([pos, [from, to]]) => {
+    addParallax(
+      () => $(`.ghost-word[data-pos="${pos}"]`),
+      from, to, "X", "%",
+      () => $("#trust-section").getBoundingClientRect()
+    );
+  });
+
+  initCrossfade($("#coach-card"));
+  renderCoachSlide();
+
+  const prevBtn = $("#trust-prev");
+  const nextBtn = $("#trust-next");
+  prevBtn.innerHTML = ICONS.arrow;
+  prevBtn.setAttribute("aria-label", t.previousAriaLabel);
+  nextBtn.innerHTML = ICONS.arrow;
+  nextBtn.setAttribute("aria-label", t.nextAriaLabel);
+  prevBtn.addEventListener("click", () => goToTrust(trustIndex === 0 ? t.slides.length - 1 : trustIndex - 1));
+  nextBtn.addEventListener("click", () => goToTrust((trustIndex + 1) % t.slides.length));
+
+  const dotsEl = $("#trust-dots");
+  dotsEl.innerHTML = "";
+  t.slides.forEach((_, i) => {
+    const dot = el("button", { type: "button", class: "dot", "aria-current": i === trustIndex ? "true" : "false", "aria-label": CONTENT.accessibility.carouselGoTo(i + 1) }, [
+      el("span", { class: "dot__pill" })
+    ]);
+    dot.addEventListener("click", () => goToTrust(i));
+    dotsEl.append(dot);
+  });
+
+  springReveal($("#badge-percent"), { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1 }, { tension: 220, friction: 22 }, { delay: 0 });
+  springReveal($("#badge-card"), { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, { tension: 200, friction: 26 }, { delay: 120 });
+  springReveal($("#coach-card"), { opacity: 0, y: 60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1 }, { tension: 170, friction: 26 }, { delay: 0 });
+
+  trustObserver.observe($("#trust-section"));
+}
+
+function renderGhostWords() {
+  const [w1, w2, w3, w4] = CONTENT.trust.slides[trustIndex].headline;
+  const map = { tl: w1, tr: w2, bl: w3, br: w4 };
+  Object.entries(map).forEach(([pos, word]) => {
+    ghostWordInners[pos].textContent = word;
+  });
+  const inners = Object.values(ghostWordInners);
+  resetClipReveal(inners);
+  playClipReveal(inners, { duration: 700 });
+}
+
+function renderCoachSlide() {
+  const slide = CONTENT.trust.slides[trustIndex];
+  const img = $("#coach-img");
+  img.src = asset(slide.image);
+  img.alt = slide.alt;
+  $("#coach-name").textContent = slide.name;
+  $("#coach-role").textContent = slide.role;
+}
+
+function updateTrustDots() {
+  $$("#trust-dots .dot").forEach((d, i) => d.setAttribute("aria-current", i === trustIndex ? "true" : "false"));
+}
+
+function goToTrust(i) {
+  if (i === trustIndex) return;
+  trustIndex = i;
+  renderGhostWords();
+  crossfadeAdvance($("#coach-card"), renderCoachSlide, { tension: 260, friction: 26 }, false);
+  updateTrustDots();
+}
+
+const trustObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      renderGhostWords();
+      trustObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+/* ---------- programs ---------- */
+function renderPrograms() {
+  const p = CONTENT.programs;
+  $("#programs-eyebrow").append(eyebrow(p.eyebrow, "dark"));
+  stackedLinesInview($("#programs-title"), p.titleLines);
+
+  const list = $("#program-list");
+  p.items.forEach((item, i) => {
+    const row = el("a", { class: "program-row", href: item.href }, [
+      el("span", { class: "program-row__index", text: item.index }),
+      el("div", { class: "program-row__body" }, [
+        el("div", { class: "program-row__name", text: item.name }),
+        el("div", { class: "program-row__desc", text: item.description })
+      ]),
+      el("span", { class: "program-row__arrow-wrap" }, [
+        (() => { const s = el("span", { class: "program-row__arrow" }); s.innerHTML = ICONS.arrow; return s; })()
+      ])
+    ]);
+    list.append(row);
+    springReveal(row, { opacity: 0, y: 26 }, { opacity: 1, y: 0 }, { tension: 190, friction: 26 }, { delay: i * 90 });
+  });
+}
+
+/* ---------- facilities ---------- */
+function renderFacilities() {
+  const f = CONTENT.facilities;
+  const iconEl = $("#facilities-icon");
+  const iconImg = $("img", iconEl);
+  iconImg.src = asset("3.webp");
+  iconImg.alt = f.introImageAlt;
+  springReveal(iconEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1 }, { tension: 240, friction: 20 }, { delay: 0 });
+
+  stackedLinesInview($("#facilities-title"), f.titleLines);
+
+  const bodySpans = buildWordFade($("#facilities-body"), f.body);
+  const bodyObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        playWordFade(bodySpans, { wordStagger: 28, delayIn: 250, duration: 700 });
+        bodyObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  bodyObserver.observe($("#facilities-body"));
+
+  const cardsEl = $("#facilities-cards");
+  f.courts.forEach((court, i) => {
+    const card = el("figure", { class: "court-card" }, [
+      el("img", { src: asset(court.image), alt: court.alt, loading: "lazy" }),
+      el("figcaption", { class: `court-card__caption ${court.tone}` }, [
+        el("div", { class: "court-card__name", text: court.name }),
+        el("div", { class: "court-card__desc", text: court.description })
+      ])
+    ]);
+    cardsEl.append(card);
+    springReveal(card, { opacity: 0, y: 48 }, { opacity: 1, y: 0 }, { tension: 180, friction: 26 }, { delay: i * 140 });
+  });
+}
+
+/* ---------- stats ---------- */
+function renderStats() {
+  const s = CONTENT.stats;
+  $("#stats-eyebrow").append(eyebrow(s.eyebrow, "light"));
+  stackedLinesInview($("#stats-title"), s.titleLines);
+
+  const grid = $("#stats-grid");
+  s.items.forEach((item, i) => {
+    const cell = el("div", { class: "stat-cell" }, [
+      el("dt", { class: "sr-only", text: item.label }),
+      el("dd", {}, [
+        el("div", { class: "stat-cell__value", text: item.value }),
+        el("div", { class: "stat-cell__label", "aria-hidden": "true", text: item.label })
+      ])
+    ]);
+    grid.append(cell);
+    springReveal(cell, { opacity: 0, y: 30 }, { opacity: 1, y: 0 }, { tension: 180, friction: 24 }, { delay: i * 110 });
+  });
+}
+
+/* ---------- testimonials ---------- */
+function renderTestimonials() {
+  const t = CONTENT.testimonials;
+  $("#testimonials-eyebrow").append(eyebrow(t.eyebrow, "dark"));
+  stackedLinesInview($("#testimonials-title"), t.titleLines);
+
+  const list = $("#testimonial-list");
+  t.items.forEach((item, i) => {
+    const card = el("li", { class: "testimonial-card" }, [
+      el("div", {}, [
+        el("div", { class: "testimonial-card__glyph", text: t.quoteGlyph }),
+        el("blockquote", { class: "testimonial-card__quote", text: item.quote })
+      ]),
+      el("figcaption", { class: "testimonial-card__footer" }, [
+        el("div", { class: "testimonial-card__name", text: item.name }),
+        el("div", { class: "testimonial-card__role", text: item.role })
+      ])
+    ]);
+    list.append(card);
+    springReveal(card, { opacity: 0, y: 40 }, { opacity: 1, y: 0 }, { tension: 180, friction: 26 }, { delay: i * 120 });
+  });
+}
+
+/* ---------- footer ---------- */
+function renderFooter() {
+  const f = CONTENT.footer;
+
+  $("#footer-eyebrow").append(eyebrow(f.eyebrow, "light"));
+  stackedLinesInview($("#footer-cta-title"), f.ctaLines);
+
+  const bookBtn = $("#footer-book");
+  bookBtn.append(el("span", { text: f.bookVisit }), el("span", { class: "pill-btn__arrow", html: ICONS.arrow }));
+  bookBtn.addEventListener("click", openModal);
+  springReveal(bookBtn, { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, { tension: 200, friction: 24 }, { delay: 150 });
+
+  const columnsEl = $("#footer-columns");
+  columnsEl.innerHTML = "";
+
+  const brandCol = el("div", { class: "footer__brand-col" }, [
+    el("div", { class: "footer__brand", html: ICONS.mark }),
+    el("p", { class: "footer__blurb", text: f.blurb }),
+    el("address", { class: "footer__address" }, [
+      el("a", { href: `mailto:${f.contact.email}`, text: f.contact.email }),
+      el("a", { href: f.contact.phoneHref, text: f.contact.phoneDisplay }),
+      el("span", { class: "muted", text: f.contact.address })
+    ])
+  ]);
+  $(".footer__brand", brandCol).append(el("span", { text: CONTENT.site.name }));
+  columnsEl.append(brandCol);
+
+  f.navColumns.forEach((col) => {
+    columnsEl.append(
+      el("nav", {}, [
+        el("div", { class: "footer__nav-heading", text: col.heading }),
+        el("ul", { class: "footer__nav-list" }, col.links.map((link) => el("li", {}, [el("a", { href: link.href, text: link.label })])))
+      ])
+    );
+  });
+
+  $("#footer-copyright").textContent = f.copyright;
+
+  const socialEl = $("#footer-social");
+  f.socialLinks.forEach((s) => socialEl.append(el("a", { href: s.href, text: s.label })));
+
+  const legalEl = $("#footer-legal");
+  f.legalLinks.forEach((l) => legalEl.append(el("a", { href: l.href, text: l.label })));
+}
+
+/* ---------- menu overlay ---------- */
+const menuSprings = { backdrop: createSpringState(0), opacity: createSpringState(0), y: createSpringState(-24) };
+let menuLinkEls = [];
+let menuOpen = false;
+let menuReturnFocus = null;
+
+function renderMenu() {
+  const m = CONTENT.menu;
+  const brand = $("#menu-brand");
+  brand.innerHTML = ICONS.mark;
+  brand.append(el("span", { text: CONTENT.site.name }));
+
+  const closeBtn = $("#menu-close");
+  closeBtn.innerHTML = ICONS.close;
+  closeBtn.setAttribute("aria-label", m.closeAriaLabel);
+  closeBtn.addEventListener("click", closeMenu);
+
+  const nav = $("#menu-nav");
+  nav.innerHTML = "";
+  menuLinkEls = m.links.map((link) => {
+    const a = el("a", { href: link.href, text: link.label });
+    a.addEventListener("click", closeMenu);
+    nav.append(a);
+    return a;
+  });
+
+  const bookBtn = $("#menu-book");
+  bookBtn.append(el("span", { text: m.bookVisit }), el("span", { class: "pill-btn__arrow", html: ICONS.arrow }));
+  bookBtn.addEventListener("click", () => { closeMenu(); openModal(); });
+
+  const socialEl = $("#menu-social");
+  CONTENT.footer.socialLinks.forEach((s) => socialEl.append(el("a", { href: s.href, text: s.label })));
+
+  $("#menu-backdrop").addEventListener("click", closeMenu);
+}
+
+function applyMenuStyles() {
+  $("#menu-backdrop").style.opacity = String(menuSprings.backdrop.value);
+  const panel = $("#menu-panel");
+  panel.style.opacity = String(menuSprings.opacity.value);
+  panel.style.transform = `translateY(${menuSprings.y.value}px)`;
+}
+
+function openMenu() {
+  if (menuOpen) return;
+  menuOpen = true;
+  menuReturnFocus = document.activeElement;
+  lockScroll();
+  const overlay = $("#menu-overlay");
+  overlay.classList.add("open");
+  overlay.setAttribute("aria-hidden", "false");
+  springTo(menuSprings.backdrop, 1, { tension: 260, friction: 30 }, applyMenuStyles);
+  springTo(menuSprings.opacity, 1, { tension: 220, friction: 28 }, applyMenuStyles);
+  springTo(menuSprings.y, 0, { tension: 220, friction: 28 }, applyMenuStyles);
+
+  menuLinkEls.forEach((a, i) => {
+    const state = { opacity: createSpringState(0), y: createSpringState(28) };
+    const apply = () => { a.style.opacity = String(state.opacity.value); a.style.transform = `translateY(${state.y.value}px)`; };
+    apply();
+    setTimeout(() => {
+      if (!menuOpen) return;
+      springTo(state.opacity, 1, { tension: 200, friction: 26 }, apply);
+      springTo(state.y, 0, { tension: 200, friction: 26 }, apply);
+    }, 120 + i * 70);
+  });
+
+  setTimeout(() => $("#menu-close").focus(), 120);
+}
+
+function closeMenu() {
+  if (!menuOpen) return;
+  menuOpen = false;
+  const overlay = $("#menu-overlay");
+  overlay.classList.remove("open");
+  overlay.setAttribute("aria-hidden", "true");
+  springTo(menuSprings.backdrop, 0, { tension: 260, friction: 30 }, applyMenuStyles);
+  springTo(menuSprings.opacity, 0, { tension: 220, friction: 28 }, applyMenuStyles);
+  springTo(menuSprings.y, -24, { tension: 220, friction: 28 }, applyMenuStyles);
+  menuLinkEls.forEach((a) => { a.style.opacity = "0"; a.style.transform = "translateY(28px)"; });
+  unlockScroll();
+  if (menuReturnFocus && menuReturnFocus.focus) menuReturnFocus.focus();
+}
+
+/* ---------- contact modal ---------- */
+const modalSprings = { backdrop: createSpringState(0), opacity: createSpringState(0), y: createSpringState(28), scale: createSpringState(0.96) };
+let modalOpen = false;
+let modalReturnFocus = null;
+let modalTitleInners = [];
+
+function renderModal() {
+  const m = CONTENT.contactModal;
+  $("#modal-eyebrow").append(eyebrow(m.eyebrow, "dark"));
+  modalTitleInners = buildClipLines($("#modal-title"), m.titleLines);
+
+  const closeBtn = $("#modal-close");
+  closeBtn.innerHTML = ICONS.close;
+  closeBtn.setAttribute("aria-label", m.closeAriaLabel);
+  closeBtn.addEventListener("click", closeModal);
+
+  $("#label-name").textContent = m.fields.name.label;
+  $("#field-name").setAttribute("placeholder", m.fields.name.placeholder);
+  $("#label-email").textContent = m.fields.email.label;
+  $("#field-email").setAttribute("placeholder", m.fields.email.placeholder);
+  $("#label-message").textContent = m.fields.message.label;
+  $("#field-message").setAttribute("placeholder", m.fields.message.placeholder);
+
+  $("#modal-submit").textContent = m.submit;
+  $("#modal-success-icon").innerHTML = ICONS.check;
+  $("#modal-success-title").textContent = m.successTitle;
+  $("#modal-done").textContent = m.done;
+  $("#modal-done").addEventListener("click", closeModal);
+
+  $("#modal-backdrop").addEventListener("click", closeModal);
+  $("#modal-form").addEventListener("submit", handleModalSubmit);
+}
+
+function applyModalStyles() {
+  $("#modal-backdrop").style.opacity = String(modalSprings.backdrop.value);
+  const panel = $("#modal-panel");
+  panel.style.opacity = String(modalSprings.opacity.value);
+  panel.style.transform = `translateY(${modalSprings.y.value}px) scale(${modalSprings.scale.value})`;
+}
+
+function openModal() {
+  if (modalOpen) return;
+  modalOpen = true;
+  modalReturnFocus = document.activeElement;
+  lockScroll();
+  const overlay = $("#modal-overlay");
+  overlay.classList.add("open");
+  springTo(modalSprings.backdrop, 1, { tension: 240, friction: 30 }, applyModalStyles);
+  springTo(modalSprings.opacity, 1, { tension: 240, friction: 26 }, applyModalStyles);
+  springTo(modalSprings.y, 0, { tension: 240, friction: 26 }, applyModalStyles);
+  springTo(modalSprings.scale, 1, { tension: 240, friction: 26 }, applyModalStyles);
+
+  resetClipReveal(modalTitleInners);
+  playClipReveal(modalTitleInners, { stagger: 90, duration: 800 });
+
+  setTimeout(() => $("#field-name").focus(), 120);
+}
+
+function closeModal() {
+  if (!modalOpen) return;
+  modalOpen = false;
+  const overlay = $("#modal-overlay");
+  overlay.classList.remove("open");
+  springTo(modalSprings.backdrop, 0, { tension: 240, friction: 30 }, applyModalStyles);
+  springTo(modalSprings.opacity, 0, { tension: 240, friction: 26 }, applyModalStyles);
+  springTo(modalSprings.y, 28, { tension: 240, friction: 26 }, applyModalStyles);
+  springTo(modalSprings.scale, 0.96, { tension: 240, friction: 26 }, applyModalStyles);
+  unlockScroll();
+  if (modalReturnFocus && modalReturnFocus.focus) modalReturnFocus.focus();
+  setTimeout(resetModalForm, 350);
+}
+
+function resetModalForm() {
+  $("#modal-form").reset();
+  $("#modal-form").hidden = false;
+  $("#modal-success").hidden = true;
+  const submitBtn = $("#modal-submit");
+  submitBtn.disabled = false;
+  submitBtn.textContent = CONTENT.contactModal.submit;
+}
+
+function handleModalSubmit(e) {
+  e.preventDefault();
+  const submitBtn = $("#modal-submit");
+  submitBtn.disabled = true;
+  submitBtn.textContent = CONTENT.contactModal.submitting;
+  const fullName = $("#field-name").value.trim();
+  const firstName = fullName.split(" ")[0];
+  setTimeout(() => {
+    $("#modal-form").hidden = true;
+    $("#modal-success").hidden = false;
+    $("#modal-success-text").textContent = CONTENT.contactModal.successMessage({ firstName });
+  }, 900);
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (modalOpen) closeModal();
+  else if (menuOpen) closeMenu();
+});
+
+/* ---------- init ---------- */
+function init() {
+  initLoader();
+  renderHeader();
+  renderHero();
+  renderTrust();
+  renderPrograms();
+  renderFacilities();
+  renderStats();
+  renderTestimonials();
+  renderFooter();
+  renderMenu();
+  renderModal();
+}
+init();
+</script>
+</body>
+</html>
